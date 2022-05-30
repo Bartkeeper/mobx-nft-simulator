@@ -17,13 +17,14 @@ type user struct {
 }
 type userSet []user
 
-// type nfTier struct {
-// 	address     string
-// 	mobxRewards float64
-// 	nftWeight   float64
-// }
+type nfTier struct {
+	tierClass   float64
+	address     string
+	mobxRewards float64
+	nftWeight   float64
+}
 
-// type nftSet []nfTier
+type nftSet []nfTier
 
 var totalMilesWeight float64
 
@@ -35,7 +36,6 @@ func main() {
 	userGroup2.resetNFT()
 	userGroup.calculateRewards()
 	userGroup2.calculateRewards()
-
 	userGroup.calculateNFTbonus(userGroup2)
 }
 
@@ -59,10 +59,31 @@ func newUser() userSet {
 		address:        "fetch106jc99nlh5jspd80q4xnv69d63qc9eg4m0sc2x",
 		stakedMobx:     100,
 		collectedMiles: 100,
-		nftWeight:      1,
+		nftWeight:      2,
 	}
 
-	userGroup := userSet{user1, user2, user3}
+	user4 := user{
+		address:        "fetch1027maq7mdtaxa5wan00f0f5nmt70nz933z6vd5",
+		stakedMobx:     100,
+		collectedMiles: 100,
+		nftWeight:      3,
+	}
+
+	user5 := user{
+		address:        "fetch103ngv5cftngje4yyhe5qkmp9adgdpsvy4fnkwz",
+		stakedMobx:     100,
+		collectedMiles: 100,
+		nftWeight:      1.5,
+	}
+
+	user6 := user{
+		address:        "fetch102ntrhyxpfeyfc5kl0wam3ehmzz4atc52t0ddf",
+		stakedMobx:     100,
+		collectedMiles: 100,
+		nftWeight:      1.5,
+	}
+
+	userGroup := userSet{user1, user2, user3, user4, user5, user6}
 
 	return userGroup
 }
@@ -137,21 +158,51 @@ func (us userSet) calculateRewards() {
 
 // ToDo: function shouldn't stop after the first NFT find
 
-func getNFTRewards2(us userSet) (string, float64) {
+func getNFTRewards2(us userSet, nft nftSet) []nfTier {
+
 	for _, mobxUser := range us {
-		switch mobxUser.nftWeight {
-		case 1:
-			fmt.Println("next")
-		case 1.5:
-			return mobxUser.address, mobxUser.mobxRewards
-		case 2:
-			return mobxUser.address, mobxUser.mobxRewards
-		case 3:
-			return mobxUser.address, mobxUser.mobxRewards
+
+		for _, nftUser := range nft {
+			// fmt.Println("entered nft loop")
+			switch mobxUser.nftWeight {
+			case 1:
+				if nftUser.address == "" {
+					// fmt.Println("For Tier 1 - entering the if worked")
+					tier1 := nftSet{{1, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight}}
+					nft[0] = tier1[0]
+					// fmt.Println(nft[0])
+				}
+			case 1.5:
+				if nftUser.address == "" {
+					// fmt.Println("For Tier 1.5 - entering the if worked")
+					tier15 := nftSet{{1.5, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight}}
+					nft[1] = tier15[0]
+					// fmt.Println(nft[1])
+				}
+			case 2:
+				if nftUser.address == "" {
+					// fmt.Println("For Tier 2 - entering the if worked")
+					tier2 := nftSet{{2, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight}}
+					nft[2] = tier2[0]
+					// fmt.Println(nft[2])
+				}
+			case 3:
+				if nftUser.address == "" {
+					// fmt.Println("For Tier 3 - entering the if worked")
+					tier3 := nftSet{{3, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight}}
+					nft[3] = tier3[0]
+					// fmt.Println(nft[3])
+				}
+			default:
+				fmt.Println("default")
+			}
+
 		}
 	}
 
-	return "0", 0
+	// fmt.Println("Exited getNFTrewards")
+	// fmt.Println(nft)
+	return nft
 }
 
 // func getNFTRewards3(us userSet, ns nftSet) []string {
@@ -195,16 +246,19 @@ func getNFTRewards2(us userSet) (string, float64) {
 // }
 
 func (us userSet) calculateNFTbonus(us2 userSet) {
-	nftBonusAddress, nftBonusRewards := getNFTRewards2(us)
+	nftGroup := nftSet{{1, "", 0, 0}, {1.5, "", 0, 0}, {2, "", 0, 0}, {3, "", 0, 0}}
+	nft := getNFTRewards2(us, nftGroup)
 
-	for _, mobxUser := range us2 {
-		if mobxUser.address == nftBonusAddress {
+	for _, nfTier := range nft {
+		for _, mobxUser := range us2 {
+			if mobxUser.address == nfTier.address {
+				fmt.Println("+++++++++++++++++++++++++++++++++")
+				fmt.Println("Reward with Tier", nfTier.nftWeight, "is :", nfTier.mobxRewards)
+				fmt.Println("Reward without NFT", mobxUser.mobxRewards)
+				nftBonus := ((nfTier.mobxRewards / mobxUser.mobxRewards) - 1) * 100
 
-			fmt.Println("Reward with NFT:", nftBonusRewards)
-			fmt.Println("Reward without NFT", mobxUser.mobxRewards)
-			nftBonus := ((nftBonusRewards / mobxUser.mobxRewards) - 1) * 100
-
-			fmt.Println("The NFT bonus is:", nftBonus, "%")
+				fmt.Println("The NFT bonus with Tier", nfTier.nftWeight, " is:", nftBonus, "%")
+			}
 		}
 	}
 
