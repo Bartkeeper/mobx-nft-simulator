@@ -41,11 +41,13 @@ func main() {
 
 func newUser() userSet {
 
+	// Creates some example users with values
+
 	user1 := user{
 		address:        "fetch1034pkj6fcm6te04vfq9d6qcm6493xa7dacswvh",
 		stakedMobx:     100,
 		collectedMiles: 100,
-		nftWeight:      1.5,
+		nftWeight:      3,
 	}
 
 	user2 := user{
@@ -59,14 +61,14 @@ func newUser() userSet {
 		address:        "fetch106jc99nlh5jspd80q4xnv69d63qc9eg4m0sc2x",
 		stakedMobx:     100,
 		collectedMiles: 100,
-		nftWeight:      2,
+		nftWeight:      1.5,
 	}
 
 	user4 := user{
 		address:        "fetch1027maq7mdtaxa5wan00f0f5nmt70nz933z6vd5",
 		stakedMobx:     100,
 		collectedMiles: 100,
-		nftWeight:      3,
+		nftWeight:      1.5,
 	}
 
 	user5 := user{
@@ -90,6 +92,8 @@ func newUser() userSet {
 
 func (us userSet) defineWeight() {
 
+	// defines the weight based on the staked amount
+
 	for i, mobxUser := range us {
 		mobxUser.weight = math.Log(mobxUser.stakedMobx+1.1) / math.Log(1.25)
 		// fmt.Println("The weight of user", i, "is", mobxUser.weight)
@@ -99,6 +103,8 @@ func (us userSet) defineWeight() {
 
 func (us userSet) defineMilesWeight() {
 	totalMilesWeight = 0
+
+	// calculates the miles weight based on the weight defined in the upper function, the collected miles and the NFT weight
 
 	for i, mobxUser := range us {
 		mobxUser.milesWeight = mobxUser.weight * mobxUser.collectedMiles * mobxUser.nftWeight
@@ -110,6 +116,8 @@ func (us userSet) defineMilesWeight() {
 
 func (us userSet) defineRatio() {
 
+	// calculates the reward share based on the total amount of miles weight
+
 	for i, mobxUser := range us {
 		mobxUser.rewardShare = mobxUser.milesWeight / totalMilesWeight
 		// fmt.Println("The reward share of user", i, "is", mobxUser.rewardShare)
@@ -118,6 +126,9 @@ func (us userSet) defineRatio() {
 }
 
 func (us userSet) defineRewards() {
+
+	// for each user, the real MOBX reward is calculated based on the reward share
+
 	var rewardPool float64 = 10000
 
 	for i, mobxUser := range us {
@@ -128,6 +139,10 @@ func (us userSet) defineRewards() {
 }
 
 func (us userSet) resetNFT() {
+
+	// sets the NFT weights of all users to 1
+	// should only be called by a new userGroup
+
 	for i, mobxUser := range us {
 		mobxUser.nftWeight = 1
 		// fmt.Println("The mobx rewards of user", i, "is", mobxUser.nftWeight)
@@ -142,23 +157,10 @@ func (us userSet) calculateRewards() {
 	us.defineRewards()
 }
 
-// func getNFTRewards(us userSet) (string, float64) {
-// 	for _, mobxUser := range us {
-// 		fmt.Println(mobxUser.address, mobxUser.nftWeight)
-// 		if mobxUser.nftWeight == 1.5 {
-// 			fmt.Println("MOBXuser with NFT found")
-// 			return mobxUser.address, mobxUser.mobxRewards
-// 		} else {
-// 			fmt.Println("This user doesn't have an NFT")
-// 		}
-// 	}
-
-// 	return "0", 0
-// }
-
-// ToDo: function shouldn't stop after the first NFT find
-
 func getNFTRewards2(us userSet, nft nftSet) []nfTier {
+
+	// Requires a set of NFT tiers and then only picks one account of each tier
+	// returns a set of accounts with distinct NFT tiers
 
 	for _, mobxUser := range us {
 
@@ -205,47 +207,11 @@ func getNFTRewards2(us userSet, nft nftSet) []nfTier {
 	return nft
 }
 
-// func getNFTRewards3(us userSet, ns nftSet) []string {
-
-// 	for i, mobxUser := range us {
-// 		switch mobxUser.nftWeight {
-// 		case 1:
-// 			for _, nftSet := range ns {
-// 				if nftSet.nftWeight != 1 {
-// 					ns[i].address = mobxUser.address
-// 					ns[i].nftWeight = mobxUser.nftWeight
-// 				}
-// 			}
-// 		case 1.5:
-// 			for _, nftSet := range ns {
-// 				if nftSet.nftWeight != 1.5 {
-// 					ns[i].address = mobxUser.address
-// 					ns[i].nftWeight = mobxUser.nftWeight
-// 				}
-// 			}
-// 		case 2:
-// 			for _, nftSet := range ns {
-// 				if nftSet.nftWeight != 1 {
-// 					ns[i].address = mobxUser.address
-// 					ns[i].nftWeight = mobxUser.nftWeight
-// 				}
-// 			}
-// 		case 3:
-// 			for _, nftSet := range ns {
-// 				if nftSet.nftWeight != 1 {
-// 					ns[i].address = mobxUser.address
-// 					ns[i].nftWeight = mobxUser.nftWeight
-// 				}
-// 			}
-// 		}
-// 	}
-
-// 	nftTier := []string{tier0, tier1, tier2, tier3}
-// 	fmt.Println(nftTier)
-// 	return nftTier
-// }
-
 func (us userSet) calculateNFTbonus(us2 userSet) {
+
+	// (currently) calculates the difference of the rewards compared to a world without NFT bonus
+	// prints out final results
+
 	nftGroup := nftSet{{1, "", 0, 0}, {1.5, "", 0, 0}, {2, "", 0, 0}, {3, "", 0, 0}}
 	nft := getNFTRewards2(us, nftGroup)
 
@@ -255,9 +221,10 @@ func (us userSet) calculateNFTbonus(us2 userSet) {
 				fmt.Println("+++++++++++++++++++++++++++++++++")
 				fmt.Println("Reward with Tier", nfTier.nftWeight, "is :", nfTier.mobxRewards)
 				fmt.Println("Reward without NFT", mobxUser.mobxRewards)
-				nftBonus := ((nfTier.mobxRewards / mobxUser.mobxRewards) - 1) * 100
+				nftBonus := (((nfTier.mobxRewards / mobxUser.mobxRewards) - 1) * 100)
 
 				fmt.Println("The NFT bonus with Tier", nfTier.nftWeight, " is:", nftBonus, "%")
+				fmt.Println("By buying an NFT with Tier", nfTier.nftWeight, ", the Rewards increased by", nftBonus, "%")
 			}
 		}
 	}
