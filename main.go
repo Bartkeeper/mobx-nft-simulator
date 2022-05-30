@@ -14,6 +14,7 @@ type user struct {
 	rewardShare    float64
 	mobxRewards    float64
 	nftWeight      float64
+	nftBonus       float64
 }
 type userSet []user
 
@@ -22,6 +23,7 @@ type nfTier struct {
 	address     string
 	mobxRewards float64
 	nftWeight   float64
+	nftBonus    float64
 }
 
 type nftSet []nfTier
@@ -70,7 +72,7 @@ func newUser() userSet {
 		address:        "fetch1027maq7mdtaxa5wan00f0f5nmt70nz933z6vd5",
 		stakedMobx:     100,
 		collectedMiles: 100,
-		nftWeight:      1.5,
+		nftWeight:      2,
 	}
 
 	user5 := user{
@@ -172,28 +174,28 @@ func getNFTRewards2(us userSet, nft nftSet) []nfTier {
 			case 1:
 				if nftUser.address == "" {
 					// fmt.Println("For Tier 1 - entering the if worked")
-					tier1 := nftSet{{1, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight}}
+					tier1 := nftSet{{1, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
 					nft[0] = tier1[0]
 					// fmt.Println(nft[0])
 				}
 			case 1.5:
 				if nftUser.address == "" {
 					// fmt.Println("For Tier 1.5 - entering the if worked")
-					tier15 := nftSet{{1.5, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight}}
+					tier15 := nftSet{{1.5, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
 					nft[1] = tier15[0]
 					// fmt.Println(nft[1])
 				}
 			case 2:
 				if nftUser.address == "" {
 					// fmt.Println("For Tier 2 - entering the if worked")
-					tier2 := nftSet{{2, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight}}
+					tier2 := nftSet{{2, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
 					nft[2] = tier2[0]
 					// fmt.Println(nft[2])
 				}
 			case 3:
 				if nftUser.address == "" {
 					// fmt.Println("For Tier 3 - entering the if worked")
-					tier3 := nftSet{{3, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight}}
+					tier3 := nftSet{{3, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
 					nft[3] = tier3[0]
 					// fmt.Println(nft[3])
 				}
@@ -214,21 +216,23 @@ func (us userSet) calculateNFTbonus(us2 userSet) {
 	// (currently) calculates the difference of the rewards compared to a world without NFT bonus
 	// prints out final results
 
-	nftGroup := nftSet{{1, "", 0, 0}, {1.5, "", 0, 0}, {2, "", 0, 0}, {3, "", 0, 0}}
+	nftGroup := nftSet{{1, "", 0, 0, 0}, {1.5, "", 0, 0, 0}, {2, "", 0, 0, 0}, {3, "", 0, 0, 0}}
 	nft := getNFTRewards2(us, nftGroup)
 
 	// ToDo: compare the NFT bonus based on the earnings of someone that does not have an NFT
 
-	for _, nfTier := range nft {
+	for i, nfTier := range nft {
 		for _, mobxUser := range us2 {
 			if mobxUser.address == nfTier.address {
-				fmt.Println("+++++++++++++++++++++++++++++++++")
-				fmt.Println("Reward with Tier", nfTier.nftWeight, "is :", nfTier.mobxRewards)
-				fmt.Println("Reward without NFT", mobxUser.mobxRewards)
-				nftBonus := (((nfTier.mobxRewards / mobxUser.mobxRewards) - 1) * 100)
+				// fmt.Println("+++++++++++++++++++++++++++++++++")
+				// fmt.Println("Reward with Tier", nfTier.nftWeight, "is :", nfTier.mobxRewards)
+				// fmt.Println("Reward without NFT", mobxUser.mobxRewards)
+				nft[i].nftBonus = (((nfTier.mobxRewards / mobxUser.mobxRewards) - 1) * 100)
+				effectiveBonus := nft[i].nftBonus - nft[0].nftBonus
+				var effectiveBonusInt int = int(effectiveBonus)
 
-				fmt.Println("The NFT bonus with Tier", nfTier.nftWeight, " is:", nftBonus, "%")
-				fmt.Println("By buying an NFT with Tier", nfTier.nftWeight, ", the Rewards increased by", nftBonus, "%")
+				// fmt.Println("The NFT bonus with Tier", nfTier.nftWeight, " is:", nft[i].nftBonus, "%")
+				fmt.Println("By buying an NFT with Tier", nfTier.nftWeight, ", the Rewards increased by", effectiveBonusInt, "%")
 			}
 		}
 	}
