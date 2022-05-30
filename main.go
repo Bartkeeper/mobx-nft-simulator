@@ -43,6 +43,8 @@ func newUser() userSet {
 
 	// Creates some example users with values
 
+	// ToDo: Import the users via CSV in a struct
+
 	user1 := user{
 		address:        "fetch1034pkj6fcm6te04vfq9d6qcm6493xa7dacswvh",
 		stakedMobx:     100,
@@ -214,6 +216,8 @@ func (us userSet) calculateNFTbonus(us2 userSet) {
 
 	nftGroup := nftSet{{1, "", 0, 0}, {1.5, "", 0, 0}, {2, "", 0, 0}, {3, "", 0, 0}}
 	nft := getNFTRewards2(us, nftGroup)
+
+	// ToDo: compare the NFT bonus based on the earnings of someone that does not have an NFT
 
 	for _, nfTier := range nft {
 		for _, mobxUser := range us2 {
