@@ -8,6 +8,8 @@ import (
 	"strconv"
 )
 
+// ToDo - Split up structs and functions into seperate go files of the same package
+
 type user struct {
 	address        string
 	stakedMobx     float64
@@ -171,6 +173,7 @@ func getNFTRewards2(us userSet, nft nftSet) []nfTier {
 	// Requires a set of NFT tiers and then only picks one account of each tier
 	// returns a set of accounts with distinct NFT tiers
 
+	// ToDo: Performance increase - only the first value should be entered and not loop through the entire userset
 	for _, mobxUser := range us {
 		for _, nftUser := range nft {
 			switch mobxUser.nftWeight {
@@ -211,8 +214,6 @@ func (us userSet) calculateNFTbonus(us2 userSet) {
 
 	nftGroup := nftSet{{1, "", 0, 0, 0}, {1.5, "", 0, 0, 0}, {2, "", 0, 0, 0}, {3, "", 0, 0, 0}}
 	nft := getNFTRewards2(us, nftGroup)
-
-	fmt.Println(nft)
 
 	for i, nfTier := range nft {
 		for _, mobxUser := range us2 {
@@ -296,6 +297,5 @@ func importCSV() userSet {
 		csvUserGroup = append(csvUserGroup, newUser)
 
 	}
-	// fmt.Println(csvUserGroup)
 	return csvUserGroup
 }
