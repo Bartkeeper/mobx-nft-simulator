@@ -45,12 +45,12 @@ func main() {
 	// userGroup2 := newUser()
 
 	userGroup := importCSV()
-	userGroup2 := importCSV()
+	// userGroup2 := importCSV()
 
-	userGroup2.resetNFT()
-	userGroup.calculateRewards()
-	userGroup2.calculateRewards()
-	userGroup.calculateNFTbonus(userGroup2)
+	// userGroup2.resetNFT()
+	// userGroup.calculateRewards()
+	// userGroup2.calculateRewards()
+	// userGroup.calculateNFTbonus(userGroup2)
 
 	fmt.Println(userGroup)
 	fmt.Println(userGroup[3])
@@ -278,7 +278,7 @@ func importCSV() []user {
 			nftBonus:       nB,
 		}
 		csvUserSetSlice = append(csvUserSetSlice, newMobxUser)
-		// fmt.Println(csvUserSetSlice)
+		fmt.Println(csvUserSetSlice)
 	}
 
 	return csvUserSetSlice
