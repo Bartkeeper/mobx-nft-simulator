@@ -31,12 +31,6 @@ type nfTier struct {
 
 type nftSet []nfTier
 
-type empData struct {
-	Name string
-	Age  string
-	City string
-}
-
 var totalMilesWeight float64
 
 func main() {
@@ -45,22 +39,18 @@ func main() {
 	// userGroup2 := newUser()
 
 	userGroup := importCSV()
-	// userGroup2 := importCSV()
+	userGroup2 := importCSV()
 
-	// userGroup2.resetNFT()
-	// userGroup.calculateRewards()
-	// userGroup2.calculateRewards()
-	// userGroup.calculateNFTbonus(userGroup2)
+	userGroup2.resetNFT()
+	userGroup.calculateRewards()
+	userGroup2.calculateRewards()
+	userGroup.calculateNFTbonus(userGroup2)
 
-	fmt.Println(userGroup)
-	fmt.Println(userGroup[3])
 }
 
 // func newUser() userSet {
 
 // Creates some example users with values
-
-// ToDo: Import the users via CSV in a struct
 
 // user1 := user{
 // 	address:        "fetch1034pkj6fcm6te04vfq9d6qcm6493xa7dacswvh",
@@ -182,7 +172,6 @@ func getNFTRewards2(us userSet, nft nftSet) []nfTier {
 	// returns a set of accounts with distinct NFT tiers
 
 	for _, mobxUser := range us {
-
 		for _, nftUser := range nft {
 			switch mobxUser.nftWeight {
 			case 1:
@@ -223,6 +212,8 @@ func (us userSet) calculateNFTbonus(us2 userSet) {
 	nftGroup := nftSet{{1, "", 0, 0, 0}, {1.5, "", 0, 0, 0}, {2, "", 0, 0, 0}, {3, "", 0, 0, 0}}
 	nft := getNFTRewards2(us, nftGroup)
 
+	fmt.Println(nft)
+
 	for i, nfTier := range nft {
 		for _, mobxUser := range us2 {
 			if mobxUser.address == nfTier.address {
@@ -243,11 +234,11 @@ func (us userSet) calculateNFTbonus(us2 userSet) {
 func importCSV() userSet {
 
 	csvUserGroup := userSet{}
-	csvFile, err := os.Open("stakers.csv")
+	csvFile, err := os.Open("stakers05-30-1.csv")
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println("Successfully Opened CSV file")
+	// fmt.Println("Successfully Opened CSV file")
 	defer csvFile.Close()
 
 	csvLines, err := csv.NewReader(csvFile).ReadAll()
@@ -257,30 +248,54 @@ func importCSV() userSet {
 	for _, line := range csvLines {
 
 		address := line[0]
-		stakedMobx, _ := strconv.ParseFloat(line[1], 64)
-		collectedMiles, _ := strconv.ParseFloat(line[2], 64)
-		weight, _ := strconv.ParseFloat(line[3], 64)
-		milesWeight, _ := strconv.ParseFloat(line[4], 64)
-		rewardShare, _ := strconv.ParseFloat(line[5], 64)
-		mobxRewards, _ := strconv.ParseFloat(line[6], 64)
-		nftWeight, _ := strconv.ParseFloat(line[7], 64)
-		nftBonus, _ := strconv.ParseFloat(line[8], 64)
-
-		user := user{
-			user.address:        address,
-			user.stakedMobx:     stakedMobx,
-			user.collectedMiles: collectedMiles,
-			user.weight:         weight,
-			user.milesWeight:    milesWeight,
-			user.rewardShare:    rewardShare,
-			user.mobxRewards:    mobxRewards,
-			user.nftWeight:      nftWeight,
-			user.nftBonus:       nftBonus,
+		stakedMobx, err := strconv.ParseFloat(line[1], 64)
+		if err != nil {
+			fmt.Println(err)
+		}
+		collectedMiles, err := strconv.ParseFloat(line[2], 64)
+		if err != nil {
+			fmt.Println(err)
+		}
+		weight, err := strconv.ParseFloat(line[3], 64)
+		if err != nil {
+			fmt.Println(err)
+		}
+		milesWeight, err := strconv.ParseFloat(line[4], 64)
+		if err != nil {
+			fmt.Println(err)
+		}
+		rewardShare, err := strconv.ParseFloat(line[5], 64)
+		if err != nil {
+			fmt.Println(err)
+		}
+		mobxRewards, err := strconv.ParseFloat(line[6], 64)
+		if err != nil {
+			fmt.Println(err)
+		}
+		nftWeight, err := strconv.ParseFloat(line[7], 64)
+		if err != nil {
+			fmt.Println(err)
+		}
+		nftBonus, err := strconv.ParseFloat(line[8], 64)
+		if err != nil {
+			fmt.Println(err)
 		}
 
-		csvUserGroup = append(csvUserGroup, user)
+		newUser := user{
+			address:        address,
+			stakedMobx:     stakedMobx,
+			collectedMiles: collectedMiles,
+			weight:         weight,
+			milesWeight:    milesWeight,
+			rewardShare:    rewardShare,
+			mobxRewards:    mobxRewards,
+			nftWeight:      nftWeight,
+			nftBonus:       nftBonus,
+		}
+
+		csvUserGroup = append(csvUserGroup, newUser)
 
 	}
-	fmt.Println(csvUserGroup)
+	// fmt.Println(csvUserGroup)
 	return csvUserGroup
 }
