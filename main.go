@@ -175,32 +175,35 @@ func getNFTRewards2(us userSet, nft nftSet) []nfTier {
 
 	// ToDo: Performance increase - only the first value should be entered and not loop through the entire userset
 	for _, mobxUser := range us {
-		for _, nftUser := range nft {
-			switch mobxUser.nftWeight {
-			case 1:
-				if nftUser.address == "" {
-					tier1 := nftSet{{1, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
-					nft[0] = tier1[0]
-				}
-			case 1.5:
-				if nftUser.address == "" {
-					tier15 := nftSet{{1.5, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
-					nft[1] = tier15[0]
-				}
-			case 2:
-				if nftUser.address == "" {
-					tier2 := nftSet{{2, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
-					nft[2] = tier2[0]
-				}
-			case 3:
-				if nftUser.address == "" {
-					tier3 := nftSet{{3, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
-					nft[3] = tier3[0]
-				}
-			default:
-				fmt.Println("default")
-			}
+		if mobxUser.collectedMiles == 0 {
 
+		} else {
+			for _, nftUser := range nft {
+				switch mobxUser.nftWeight {
+				case 1:
+					if nftUser.address == "" {
+						tier1 := nftSet{{1, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
+						nft[0] = tier1[0]
+					}
+				case 1.5:
+					if nftUser.address == "" {
+						tier15 := nftSet{{1.5, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
+						nft[1] = tier15[0]
+					}
+				case 2:
+					if nftUser.address == "" {
+						tier2 := nftSet{{2, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
+						nft[2] = tier2[0]
+					}
+				case 3:
+					if nftUser.address == "" {
+						tier3 := nftSet{{3, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
+						nft[3] = tier3[0]
+					}
+				default:
+					fmt.Println("default")
+				}
+			}
 		}
 	}
 
