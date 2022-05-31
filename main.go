@@ -240,9 +240,9 @@ func (us userSet) calculateNFTbonus(us2 userSet) {
 
 }
 
-func importCSV() []user {
+func importCSV() userSet {
 
-	var csvUserSetSlice []user
+	csvUserGroup := userSet{}
 	csvFile, err := os.Open("stakers.csv")
 	if err != nil {
 		fmt.Println(err)
@@ -256,30 +256,31 @@ func importCSV() []user {
 	}
 	for _, line := range csvLines {
 
-		cA := line[0]
-		sM, _ := strconv.ParseFloat(line[1], 64)
-		cM, _ := strconv.ParseFloat(line[2], 64)
-		w, _ := strconv.ParseFloat(line[3], 64)
-		mW, _ := strconv.ParseFloat(line[4], 64)
-		rS, _ := strconv.ParseFloat(line[5], 64)
-		mR, _ := strconv.ParseFloat(line[6], 64)
-		nW, _ := strconv.ParseFloat(line[7], 64)
-		nB, _ := strconv.ParseFloat(line[8], 64)
+		address := line[0]
+		stakedMobx, _ := strconv.ParseFloat(line[1], 64)
+		collectedMiles, _ := strconv.ParseFloat(line[2], 64)
+		weight, _ := strconv.ParseFloat(line[3], 64)
+		milesWeight, _ := strconv.ParseFloat(line[4], 64)
+		rewardShare, _ := strconv.ParseFloat(line[5], 64)
+		mobxRewards, _ := strconv.ParseFloat(line[6], 64)
+		nftWeight, _ := strconv.ParseFloat(line[7], 64)
+		nftBonus, _ := strconv.ParseFloat(line[8], 64)
 
-		newMobxUser := user{
-			address:        cA,
-			stakedMobx:     sM,
-			collectedMiles: cM,
-			weight:         w,
-			milesWeight:    mW,
-			rewardShare:    rS,
-			mobxRewards:    mR,
-			nftWeight:      nW,
-			nftBonus:       nB,
+		user := user{
+			user.address:        address,
+			user.stakedMobx:     stakedMobx,
+			user.collectedMiles: collectedMiles,
+			user.weight:         weight,
+			user.milesWeight:    milesWeight,
+			user.rewardShare:    rewardShare,
+			user.mobxRewards:    mobxRewards,
+			user.nftWeight:      nftWeight,
+			user.nftBonus:       nftBonus,
 		}
-		csvUserSetSlice = append(csvUserSetSlice, newMobxUser)
-		fmt.Println(csvUserSetSlice)
-	}
 
-	return csvUserSetSlice
+		csvUserGroup = append(csvUserGroup, user)
+
+	}
+	fmt.Println(csvUserGroup)
+	return csvUserGroup
 }
