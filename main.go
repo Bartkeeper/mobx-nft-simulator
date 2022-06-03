@@ -45,16 +45,15 @@ type nftMap struct {
 type mapping []nftMap
 
 func main() {
+	nftProps := setNFTProps(mapping{})
+	userGroup := importCSV()
+	userGroup.manipulateUsers(nftProps)
+	userGroup2 := importCSV()
 
-	// userGroup := importCSV()
-	// userGroup2 := importCSV()
-
-	// userGroup2.resetNFT()
-	// userGroup.calculateRewards()
-	// userGroup2.calculateRewards()
-	// userGroup.calculateNFTbonus(userGroup2)
-
-	setNFTProps(mapping{})
+	userGroup2.resetNFT()
+	userGroup.calculateRewards()
+	userGroup2.calculateRewards()
+	userGroup.calculateNFTbonus(userGroup2, nftProps)
 
 }
 
@@ -131,50 +130,89 @@ func getNFTRewards2(us userSet, nft nftSet) []nfTier {
 	// returns a set of accounts with distinct NFT tiers
 
 	// ToDo: Performance increase - only the first value should be entered and not loop through the entire userset
+	// fmt.Println("When entering the nft set looks like this", nft)
 	for _, mobxUser := range us {
-		if mobxUser.collectedMiles == 0 {
+		if mobxUser.collectedMiles != 0 {
 
-		} else {
-			for _, nftUser := range nft {
-				switch mobxUser.nftWeight {
-				case 1:
-					if nftUser.address == "" {
-						tier1 := nftSet{{1, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
-						nft[0] = tier1[0]
-					}
-				case 1.5:
-					if nftUser.address == "" {
-						tier15 := nftSet{{1.5, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
-						nft[1] = tier15[0]
-					}
-				case 2:
-					if nftUser.address == "" {
-						tier2 := nftSet{{2, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
-						nft[2] = tier2[0]
-					}
-				case 3:
-					if nftUser.address == "" {
-						tier3 := nftSet{{3, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
-						nft[3] = tier3[0]
-					}
-				default:
-					fmt.Println("default")
+			for i, nftUser := range nft {
+				// fmt.Println(nftUser.nftWeight)
+				if nftUser.address == "" && nftUser.nftWeight == mobxUser.nftWeight {
+
+					tier := nftSet{{nftUser.tierClass, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
+					// fmt.Println("Ardians Tier: ", tier)
+
+					nft[i] = tier[0]
+					// fmt.Println(nft[i])
+					break
 				}
+
+				// switch nftUser.tierClass {
+				// case 1:
+				// 	if nftUser.address == "" {
+				// 		tier1 := nftSet{{1, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
+				// 		nft[0] = tier1[0]
+				// 	}
+				// case 1.5:
+				// 	if nftUser.address == "" {
+				// 		tier15 := nftSet{{1.5, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
+				// 		nft[1] = tier15[0]
+				// 	}
+				// case 2:
+				// 	if nftUser.address == "" {
+				// 		tier2 := nftSet{{2, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
+				// 		nft[2] = tier2[0]
+				// 	}
+				// case 3:
+				// 	if nftUser.address == "" {
+				// 		tier3 := nftSet{{3, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
+				// 		nft[3] = tier3[0]
+				// 	}
+				// default:
+				// 	fmt.Println("default")
+				// }
 			}
 		}
 	}
 
+	// fmt.Println(nft)
+
 	return nft
 }
 
-func (us userSet) calculateNFTbonus(us2 userSet) {
+func (us userSet) calculateNFTbonus(us2 userSet, m mapping) {
 
 	// (currently) calculates the difference of the rewards compared to a world without NFT bonus
 	// prints out final results
 
-	nftGroup := nftSet{{1, "", 0, 0, 0}, {1.5, "", 0, 0, 0}, {2, "", 0, 0, 0}, {3, "", 0, 0, 0}}
-	nft := getNFTRewards2(us, nftGroup)
+	// nftGroup := nftSet{{1, "", 0, 0, 0}, {1.5, "", 0, 0, 0}, {2, "", 0, 0, 0}, {3, "", 0, 0, 0}}
 
+	nftGroup := nftSet{}
+	class1 := nfTier{
+		tierClass:   1,
+		address:     "",
+		mobxRewards: 0,
+		nftWeight:   1,
+		nftBonus:    0,
+	}
+	nftGroup = append(nftGroup, class1)
+
+	for _, m := range m {
+		newTier := nfTier{
+			tierClass:   m.tier,
+			address:     "",
+			mobxRewards: 0,
+			nftWeight:   m.multiplier,
+			nftBonus:    0,
+		}
+
+		nftGroup = append(nftGroup, newTier)
+
+	}
+
+	// fmt.Println("The entire Tier set looks like this: ", nftGroup)
+
+	nft := getNFTRewards2(us, nftGroup)
+	fmt.Println("++++++++++++++++++++++++++++++++Results++++++++++++++++++++++++++++++++")
 	for i, nfTier := range nft {
 		for _, mobxUser := range us2 {
 			if mobxUser.address == nfTier.address {
@@ -264,7 +302,6 @@ func setNFTProps(m mapping) mapping {
 
 	var f4 float64
 	_, _ = fmt.Scanf("%f4", &f4)
-	fmt.Println(f4)
 
 	numberOfNFTs := int(f4)
 
@@ -274,7 +311,7 @@ func setNFTProps(m mapping) mapping {
 		var f2 float64
 		var f3 float64
 
-		fmt.Println("For Nft Tier", j, ", please enter the tier identifier as a number")
+		fmt.Println("For Nft Tier", j, ", please enter the tier identifier as a number. DON'T USE 1")
 		_, _ = fmt.Scanf("%f", &f)
 
 		fmt.Println("For NFT Tier", j, ", please enter the multiplier as a number")
@@ -291,24 +328,24 @@ func setNFTProps(m mapping) mapping {
 
 		m = append(m, m2)
 	}
-	fmt.Println(m)
+	// fmt.Println("The Tier set looks like this: ", m)
 	return m
 }
 
 func (us userSet) manipulateUsers(m mapping) {
 
-	// toDo: restructure for loop to loop over the usetSet only for the number of NFTamounts
-
 	for _, nftTier := range m {
 
+		ln := len(us)
 		am := int(nftTier.amount)
-		amounts := rand.Intn(am)
 
-		for amounts, mobxUser := range us {
-			mobxUser.nftWeight = nftTier.multiplier
-			// fmt.Println("The mobx rewards of user", i, "is", mobxUser.nftWeight)
-			us[amounts].nftWeight = mobxUser.nftWeight
+		for l := 0; l <= am; l++ {
+
+			// does print out the same addresses
+			user := int(rand.Intn(ln))
+			us[user].nftWeight = nftTier.multiplier
 		}
+
 	}
 
 }
