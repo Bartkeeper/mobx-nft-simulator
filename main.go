@@ -341,9 +341,13 @@ func (us userSet) manipulateUsers(m mapping) {
 
 		for l := 0; l <= am; l++ {
 
-			// does print out the same addresses
-			user := int(rand.Intn(ln))
-			us[user].nftWeight = nftTier.multiplier
+			for o := 0; o < 100; o++ {
+				user := int(rand.Intn(ln))
+				if us[user].stakedMobx >= 10 {
+					us[user].nftWeight = nftTier.multiplier
+					break
+				}
+			}
 		}
 
 	}
