@@ -212,7 +212,7 @@ func (us userSet) calculateNFTbonus(us2 userSet, m mapping) {
 	// fmt.Println("The entire Tier set looks like this: ", nftGroup)
 
 	nft := getNFTRewards2(us, nftGroup)
-	fmt.Println("++++++++++++++++++++++++++++++++Results++++++++++++++++++++++++++++++++")
+	fmt.Println("++++++++++++++++++++++++++++++++ Results ++++++++++++++++++++++++++++++++")
 	for i, nfTier := range nft {
 		for _, mobxUser := range us2 {
 			if mobxUser.address == nfTier.address {
@@ -220,8 +220,8 @@ func (us userSet) calculateNFTbonus(us2 userSet, m mapping) {
 				nft[i].nftBonus = (((nfTier.mobxRewards / mobxUser.mobxRewards) - 1) * 100)
 				effectiveBonus := int(nft[i].nftBonus - nft[0].nftBonus)
 
-				// fmt.Println("The NFT bonus with Tier", nfTier.nftWeight, " is:", nft[i].nftBonus, "%")
-				fmt.Println("By buying an NFT with Tier", nfTier.nftWeight, ", the Rewards increased by", effectiveBonus, "%")
+				fmt.Println("The NFT bonus with Multiplier", nfTier.nftWeight, " is:", nft[i].nftBonus, "%")
+				fmt.Println("By buying an NFT with Multiplier", nfTier.nftWeight, ", the Rewards increased by", effectiveBonus, "%")
 			}
 		}
 	}
