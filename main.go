@@ -63,7 +63,6 @@ func (us userSet) defineWeight() {
 
 	for i, mobxUser := range us {
 		mobxUser.weight = math.Log(mobxUser.stakedMobx+1.1) / math.Log(1.25)
-		// fmt.Println("The weight of user", i, "is", mobxUser.weight)
 		us[i].weight = mobxUser.weight
 	}
 }
@@ -75,7 +74,6 @@ func (us userSet) defineMilesWeight() {
 
 	for i, mobxUser := range us {
 		mobxUser.milesWeight = mobxUser.weight * mobxUser.collectedMiles * mobxUser.nftWeight
-		// fmt.Println("The miles weight of user", i, "is", mobxUser.milesWeight)
 		us[i].milesWeight = mobxUser.milesWeight
 		totalMilesWeight = totalMilesWeight + mobxUser.milesWeight
 	}
@@ -87,7 +85,6 @@ func (us userSet) defineRatio() {
 
 	for i, mobxUser := range us {
 		mobxUser.rewardShare = mobxUser.milesWeight / totalMilesWeight
-		// fmt.Println("The reward share of user", i, "is", mobxUser.rewardShare)
 		us[i].rewardShare = mobxUser.rewardShare
 	}
 }
@@ -100,7 +97,6 @@ func (us userSet) defineRewards() {
 
 	for i, mobxUser := range us {
 		mobxUser.mobxRewards = mobxUser.rewardShare * rewardPool
-		// fmt.Println("The mobx rewards of user", i, "is", mobxUser.mobxRewards)
 		us[i].mobxRewards = mobxUser.mobxRewards
 	}
 }
@@ -112,7 +108,6 @@ func (us userSet) resetNFT() {
 
 	for i, mobxUser := range us {
 		mobxUser.nftWeight = 1
-		// fmt.Println("The mobx rewards of user", i, "is", mobxUser.nftWeight)
 		us[i].nftWeight = mobxUser.nftWeight
 	}
 }
@@ -129,52 +124,21 @@ func getNFTRewards2(us userSet, nft nftSet) []nfTier {
 	// Requires a set of NFT tiers and then only picks one account of each tier
 	// returns a set of accounts with distinct NFT tiers
 
-	// ToDo: Performance increase - only the first value should be entered and not loop through the entire userset
-	// fmt.Println("When entering the nft set looks like this", nft)
 	for _, mobxUser := range us {
 		if mobxUser.collectedMiles != 0 {
 
 			for i, nftUser := range nft {
-				// fmt.Println(nftUser.nftWeight)
 				if nftUser.address == "" && nftUser.nftWeight == mobxUser.nftWeight {
 
 					tier := nftSet{{nftUser.tierClass, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
-					// fmt.Println("Ardians Tier: ", tier)
 
 					nft[i] = tier[0]
-					// fmt.Println(nft[i])
 					break
 				}
 
-				// switch nftUser.tierClass {
-				// case 1:
-				// 	if nftUser.address == "" {
-				// 		tier1 := nftSet{{1, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
-				// 		nft[0] = tier1[0]
-				// 	}
-				// case 1.5:
-				// 	if nftUser.address == "" {
-				// 		tier15 := nftSet{{1.5, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
-				// 		nft[1] = tier15[0]
-				// 	}
-				// case 2:
-				// 	if nftUser.address == "" {
-				// 		tier2 := nftSet{{2, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
-				// 		nft[2] = tier2[0]
-				// 	}
-				// case 3:
-				// 	if nftUser.address == "" {
-				// 		tier3 := nftSet{{3, mobxUser.address, mobxUser.mobxRewards, mobxUser.nftWeight, mobxUser.nftBonus}}
-				// 		nft[3] = tier3[0]
-				// 	}
-				// default:
-				// 	fmt.Println("default")
-				// }
 			}
 		}
 	}
-
-	// fmt.Println(nft)
 
 	return nft
 }
@@ -183,8 +147,6 @@ func (us userSet) calculateNFTbonus(us2 userSet, m mapping) {
 
 	// (currently) calculates the difference of the rewards compared to a world without NFT bonus
 	// prints out final results
-
-	// nftGroup := nftSet{{1, "", 0, 0, 0}, {1.5, "", 0, 0, 0}, {2, "", 0, 0, 0}, {3, "", 0, 0, 0}}
 
 	nftGroup := nftSet{}
 	class1 := nfTier{
@@ -208,8 +170,6 @@ func (us userSet) calculateNFTbonus(us2 userSet, m mapping) {
 		nftGroup = append(nftGroup, newTier)
 
 	}
-
-	// fmt.Println("The entire Tier set looks like this: ", nftGroup)
 
 	nft := getNFTRewards2(us, nftGroup)
 	fmt.Println("++++++++++++++++++++++++++++++++ Results ++++++++++++++++++++++++++++++++")
@@ -298,8 +258,6 @@ func importCSV() userSet {
 func setNFTProps(m mapping) mapping {
 	fmt.Println("How many different tiers do you want? (excluding non-NFT holders)")
 
-	// reader := bufio.NewReader(os.Stdin)
-
 	var f4 float64
 	_, _ = fmt.Scanf("%f4", &f4)
 
@@ -328,7 +286,6 @@ func setNFTProps(m mapping) mapping {
 
 		m = append(m, m2)
 	}
-	// fmt.Println("The Tier set looks like this: ", m)
 	return m
 }
 
