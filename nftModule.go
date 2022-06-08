@@ -86,8 +86,8 @@ func (us UserSet) calculateNFTbonus(us2 UserSet, m mapping) {
 				nft[i].nftBonus = (((nfTier.mobxRewards / mobxUser.mobxRewards) - 1) * 100)
 				effectiveBonus := int(nft[i].nftBonus - nft[0].nftBonus)
 
-				fmt.Println("The NFT bonus with Multiplier", nfTier.nftWeight, " is:", nft[i].nftBonus, "%")
-				fmt.Println("By buying an NFT with Multiplier", nfTier.nftWeight, ", the Rewards increased by", effectiveBonus, "%")
+				fmt.Println("The absolute change with NFT Tier", nfTier.nftWeight, " is:", nft[i].nftBonus, "%")
+				fmt.Println("The relative change with NFT Tier", nfTier.nftWeight, "compared to a non-NFT holder is", effectiveBonus, "%")
 			}
 		}
 	}
